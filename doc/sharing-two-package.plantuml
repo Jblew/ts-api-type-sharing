@@ -1,0 +1,47 @@
+@startuml sharing-two-package
+title "Api protocol is the most abstract part of backend package"
+
+package "Backend" {
+    package "API protocol" {
+        interface GetTicketEndpoint {
+            +url: "/tickets/:id"
+            +parameters: { id: string }
+            +response: { contents: string } | Error
+        }
+
+        interface DeleteTicketEndpoint {
+            +method: "DELETE"
+            +url: "/tickets/:id"
+            +parameters: { id: string }
+            +response: {} | Error
+        }
+
+        interface CreateTicketEndpoint {
+            +method: "POST"
+            +url: "/tickets/create"
+            +body: { contents: string }
+            +response: { id: string } | Error
+        }
+    }
+
+    together {
+        class GetTicketHandler {}
+        GetTicketHandler --|> GetTicketEndpoint
+        class DeleteTicketHandler {}
+        DeleteTicketHandler --|> DeleteTicketEndpoint
+        class CreateTicketHandler {}
+        CreateTicketHandler --|> CreateTicketEndpoint
+    }
+}
+
+package "Frontend" {
+    class GetTicketClient {}
+    GetTicketClient -u--|> GetTicketEndpoint
+    class DeleteTicketClient {}
+    DeleteTicketClient -u--|> DeleteTicketEndpoint
+    class CreateTicketClient {}
+    CreateTicketClient -u--|> CreateTicketEndpoint
+}
+
+
+@enduml

@@ -1,0 +1,46 @@
+@startuml sharing-three-package
+
+title Api protocol has its own package that is the most abstract package
+
+package "API protocol" {
+    interface GetTicketEndpoint {
+        +method: "GET"
+        +url: "/tickets/:id"
+        +parameters: { id: string }
+        +response: { contents: string } | Error
+    }
+
+    interface DeleteTicketEndpoint {
+        +method: "DELETE"
+        +url: "/tickets/:id"
+        +parameters: { id: string }
+        +response: {} | Error
+    }
+
+    interface CreateTicketEndpoint {
+        +method: "POST"
+        +url: "/tickets/create"
+        +body: { contents: string }
+        +response: { id: string } | Error
+    }
+}
+
+package "Backend" {
+    class GetTicketHandler {}
+    GetTicketHandler -u--|> GetTicketEndpoint
+    class DeleteTicketHandler {}
+    DeleteTicketHandler -u--|> DeleteTicketEndpoint
+    class CreateTicketHandler {}
+    CreateTicketHandler -u--|> CreateTicketEndpoint
+}
+
+package "Frontend" {
+    class GetTicketClient {}
+    GetTicketClient -u--|> GetTicketEndpoint
+    class DeleteTicketClient {}
+    DeleteTicketClient -u--|> DeleteTicketEndpoint
+    class CreateTicketClient {}
+    CreateTicketClient -u--|> CreateTicketEndpoint
+}
+
+@enduml
